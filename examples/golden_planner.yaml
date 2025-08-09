@@ -1,0 +1,69 @@
+# Golden dataset for the ml-research-agent's planner.
+# Each case feeds a research question to the planner and checks the output:
+#   - structurally  (must contain Hypothesis / Method / Estimated time sections)
+#   - semantically  (cosine similarity to the expected description)
+#   - by LLM judge  (Gemini scores against a rubric)
+
+- id: lora_rank_pythia
+  input: "Does LoRA rank (8 vs 64) affect GSM8K accuracy on Pythia-160M?"
+  expected: |
+    A concrete experimental plan with a hypothesis, a numbered method, named
+    metrics, and a runtime estimate. Should reference Pythia-160M, GSM8K, and
+    LoRA-specific hyperparameters (rank, alpha, learning rate, steps).
+  scoring:
+    - method: structural
+      threshold: 1.0
+      rules:
+        - regex: '\*\*Hypothesis\*\*'
+        - regex: '\*\*Method\*\*'
+        - regex: '\*\*Estimated time\*\*'
+        - contains: pythia
+        - contains: gsm8k
+    - method: semantic_sim
+      threshold: 0.40
+    - method: llm_judge
+      threshold: 0.6
+      rubric: |
+        Score 0-1: is this a concrete, runnable ML experimental plan?
+        Required: hypothesis, numbered method, specific model/dataset names,
+        time estimate. Penalise vague "we will analyse the data" answers.
+
+- id: training_size_scaling
+  input: "How does training set size affect logistic regression accuracy on the breast cancer dataset?"
+  expected: |
+    A scikit-learn-style sweep over training-set sizes with logistic regression
+    on the breast cancer dataset. Should describe dataset, fixed split,
+    StandardScaler, and an accuracy curve plot.
+  scoring:
+    - method: structural
+      threshold: 1.0
+      rules:
+        - regex: '\*\*Hypothesis\*\*'
+        - regex: '\*\*Method\*\*'
+        - contains: breast
+        - contains: logistic
+    - method: semantic_sim
+      threshold: 0.50
+    - method: llm_judge
+      threshold: 0.6
+      rubric: "Score 0-1: is this a concrete, runnable scaling-law experiment?"
+
+- id: feature_scaling_svm
+  input: "Does StandardScaler change SVM accuracy on the wine dataset?"
+  expected: |
+    A two-armed comparison: same SVM hyperparameters, scaled vs unscaled,
+    fixed train/test split, accuracy reported for both arms.
+  scoring:
+    - method: structural
+      threshold: 1.0
+      rules:
+        - regex: '\*\*Hypothesis\*\*'
+        - regex: '\*\*Method\*\*'
+        - contains: wine
+        - contains: svm
+        - contains: scaler
+    - method: semantic_sim
+      threshold: 0.45
+    - method: llm_judge
+      threshold: 0.6
+      rubric: "Score 0-1: is this a clean two-arm A/B comparison?"
