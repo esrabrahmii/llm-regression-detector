@@ -14,17 +14,16 @@ LLM apps silently regress when prompts or models change — and you only find ou
   <img src="image%20copy%204.png" width="800" alt="DuckDB run store" />
 </p>
 
-## Status
+## How it works
 
-**Phase 1 — engine** ✅ shipped: golden YAML schema · 3 scoring methods (structural / semantic / LLM-judge) · DuckDB run store · CLI.
-
-| Phase | What it adds | State |
-|---|---|---|
-| 1 | Engine (runner, scorers, store, CLI) | ✅ |
-| 2 | Regression detector + Slack alerts (simulated) | next |
-| 3 | Streamlit dashboard (history · diff · charts) | — |
-| 4 | GitHub Actions integration (PR-comment bot) | — |
-| 5 | Polish + recorded demo | — |
+- **SUT protocol** — any LLM feature can be wrapped in a thin adapter that exposes `predict(input) -> str`. Swap models or prompts without touching the runner.
+- **Three orthogonal scorers** run on every output:
+  - *Structural* — regex / `contains` / length checks (deterministic, fast)
+  - *Semantic similarity* — cosine distance between Gemini embeddings of `output` vs `expected`
+  - *LLM-as-judge* — Gemini 2.0 Flash scores the output 0–1 against a rubric
+- **DuckDB run store** — one `runs` row per execution + `results` and `scores` rows per case. SQL-queryable, file-backed, zero infrastructure.
+- **Diff command** — `lrd diff <run_a> <run_b>` walks both runs case-by-case and surfaces every pass→fail flip, with score deltas per method.
+- **Golden YAML schema** — declarative test cases (input · expected · per-scorer thresholds). No Python required to add coverage.
 
 ## Quick start
 
