@@ -2,6 +2,18 @@
 
 > CI/CD for LLM behavior. Take any LLM-powered feature, run a golden dataset against it on every prompt or model change, score the outputs, and fire an alert when quality drops below threshold.
 
+LLM apps silently regress when prompts or models change — and you only find out when users complain. This treats prompts and models like code: every change runs against a golden dataset and surfaces regressions before they ship.
+
+## Screenshots
+
+<p align="center">
+  <img src="image.png" width="800" alt="Golden test run" /><br/>
+  <img src="image%20copy.png" width="800" alt="Per-case verdict table" /><br/>
+  <img src="image%20copy%202.png" width="800" alt="Three scoring methods" /><br/>
+  <img src="image%20copy%203.png" width="800" alt="Run diff (pass → fail flips)" /><br/>
+  <img src="image%20copy%204.png" width="800" alt="DuckDB run store" />
+</p>
+
 ## Status
 
 **Phase 1 — engine** ✅ shipped: golden YAML schema · 3 scoring methods (structural / semantic / LLM-judge) · DuckDB run store · CLI.
