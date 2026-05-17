@@ -25,6 +25,9 @@ LLM apps silently regress when prompts or models change — and you only find ou
 - **Diff command** — `lrd diff <run_a> <run_b>` walks both runs case-by-case and surfaces every pass→fail flip, with score deltas per method.
 - **Golden YAML schema** — declarative test cases (input · expected · per-scorer thresholds). No Python required to add coverage.
 
+<img width="389" height="677" alt="image" src="https://github.com/user-attachments/assets/c0415129-3916-4c0e-8b60-b15868629962" />
+
+
 ## Quick start
 
 ```bash
